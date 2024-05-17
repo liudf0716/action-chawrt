@@ -42,7 +42,6 @@ jobs:
     
     - name: Download files
       run: |
-        make defconfig
         make -j8 download
 
     - name: Compile firmware
