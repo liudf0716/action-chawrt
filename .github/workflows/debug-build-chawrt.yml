@@ -47,7 +47,7 @@ jobs:
 
     - name: Compile firmware
       run: |
-        make -j$(nproc) || make -j1 V=s
+        make V=s
         
     - name: Copy combined files
       run: |
