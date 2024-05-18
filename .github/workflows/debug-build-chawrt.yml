@@ -31,14 +31,16 @@ jobs:
         echo "src-git package https://github.com/liudf0716/packages;chawrt" > feeds.conf.default
         echo "src-git luci https://github.com/liudf0716/luci;chawrt" >> feeds.conf.default
 
-    - name: Setup .config based on input
-      run: |
-        cp ${{ github.event.inputs.target }}.config .config
-
     - name: Update and install feeds
       run: |
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+
+    - name: Setup .config based on input
+      run: |
+        cp ${{ github.event.inputs.target }}.config .config
+        make defconfig
+        diff .config ${{ github.event.inputs.target }}.config
     
     - name: Download files
       run: |
