@@ -56,7 +56,7 @@ jobs:
 
     - name: Compile firmware
       run: |
-        make V=s
+        make  -j4 || make V=s
         
     - name: Copy combined files
       run: |
