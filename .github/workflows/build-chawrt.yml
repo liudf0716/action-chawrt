@@ -31,15 +31,15 @@ jobs:
         repository: liudf0716/openwrt
         ref: chawrt/main
 
-    - name: Setup .config based on input
-      run: |
-        cp ${{ matrix.target }}.config .config
-        make oldconfig
-
     - name: Update and install feeds
       run: |
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+
+    - name: Setup .config based on input
+      run: |
+        cp ${{ matrix.target }}.config .config
+        make oldconfig
 
     - name: Compile firmware
       run: make -j8
