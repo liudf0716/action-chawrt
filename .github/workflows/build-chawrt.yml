@@ -9,12 +9,15 @@ on:
         description: 'Target platform'
         required: true
         default: 'x86'
+        type: choice
+        options:
+          - x86
+          - r2s
+          - jcg
+          - ea0326gmp
 
 jobs:
   build:
-    strategy:
-      matrix:
-        target: ['x86', 'r2s', 'jcg', 'ea0326gmp']
     runs-on: ubuntu-latest
 
     steps:
@@ -39,7 +42,7 @@ jobs:
 
     - name: Setup .config based on input
       run: |
-        cp ${{ matrix.target }}.config .config
+        cp ${{ github.event.inputs.target }}.config .config
         make oldconfig
 
     - name: Compile firmware
@@ -49,36 +52,37 @@ jobs:
       run: mkdir output
 
     - name: Copy combined files (x86)
-      if: matrix.target == 'x86'
+      if: ${{ github.event.inputs.target }} == 'x86'
       run: |
         cp bin/targets/x86/64/*combined.* output/
 
     - name: Copy sysupgrade files (r2s)
-      if: matrix.target == 'r2s'
+      if: ${{ github.event.inputs.target }} == 'r2s'
       run: |
-        mkdir output
         cp bin/targets/rockchip/armv8/*-r2s-ext4-sysupgrade.img.gz output/
     
     - name: Copy sysupgrade files (jcg)
-      if: matrix.target == 'jcg'
+      if: ${{ github.event.inputs.target }} == 'jcg'
       run: |
-        mkdir output
         cp bin/targets/mediatek/filogic/*.itb output/
         cp bin/targets/mediatek/filogic/*.bin output/
         cp bin/targets/mediatek/filogic/*.fip output/
 
+    - name: Copy files for ea0326gmp
+      if: ${{ github.event.inputs.target }} == 'ea0326gmp'
+      run: |
+        # Add the specific copy commands for ea0326gmp target here
+        cp bin/targets/ea0326gmp/* output/
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: firmware-${{ matrix.target }}
+        name: firmware-${{ github.event.inputs.target }}
         path: output/
 
   release:
     needs: build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target: ['x86', 'r2s', 'jcg', 'ea0326gmp']
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -86,7 +90,7 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v2
       with:
-        name: firmware-${{ matrix.target }}
+        name: firmware-${{ github.event.inputs.target }}
 
     - name: Create Release
       id: create_release
@@ -94,8 +98,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.run_number }}-${{ matrix.target }}
-        release_name: Release ${{ github.run_number }}-${{ matrix.target }}
+        tag_name: ${{ github.run_number }}-${{ github.event.inputs.target }}
+        release_name: Release ${{ github.run_number }}-${{ github.event.inputs.target }}
         draft: false
         prerelease: false
 
@@ -106,6 +110,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./firmware-${{ matrix.target }}/*
-        asset_name: firmware-${{ matrix.target }}.zip
+        asset_path: ./firmware-${{ github.event.inputs.target }}/*
+        asset_name: firmware-${{ github.event.inputs.target }}.zip
         asset_content_type: application/zip
