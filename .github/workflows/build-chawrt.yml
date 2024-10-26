@@ -46,7 +46,7 @@ jobs:
         make oldconfig
 
     - name: Compile firmware
-      run: make -j8
+      run: make V=s
 
     - name: Create output directory
       run: mkdir output
