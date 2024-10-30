@@ -27,9 +27,14 @@ sync_repo() {
 
     cd "$REPO_DIR"
 
-    # Add upstream repository as a remote
-    echo "Adding upstream repository as a remote..."
-    git remote add upstream "$UPSTREAM_REPO" || { echo "Failed to add upstream remote."; exit 1; }
+    # Check if the upstream remote already exists
+    if git remote | grep -q upstream; then
+        echo "Upstream remote already exists."
+    else
+        # Add upstream repository as a remote
+        echo "Adding upstream repository as a remote..."
+        git remote add upstream "$UPSTREAM_REPO" || { echo "Failed to add upstream remote."; exit 1; }
+    fi
 
     # Fetch changes from both origin and upstream
     echo "Fetching latest changes from origin and upstream..."
@@ -49,7 +54,9 @@ sync_repo() {
 
     # Push the rebased changes to your fork
     echo "Pushing rebased changes to your fork's repository..."
-    git push --force-with-lease https://$GH_TOKEN@github.com/${GITHUB_REPOSITORY}.git "$BRANCH" || { 
+    REPO_PATH="${FORK_REPO#https://github.com/}"
+    echo "REPO_PATH: $REPO_PATH"
+    git push --force-with-lease "https://${GH_TOKEN}@github.com/${REPO_PATH}" "$BRANCH" || { 
         echo "Failed to push changes to $FORK_REPO."; 
         exit 1; 
     }
