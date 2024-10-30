@@ -1,0 +1,26 @@
+name: Daily Sync
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs every day at midnight UTC
+  workflow_dispatch:  # Allows manual triggering of the workflow
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Git
+      run: |
+        git config --global user.name "Dengfeng Liu"
+        git config --global user.email "liudf0716@gmail.com"
+
+    - name: Run sync script
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: |
+        chmod +x sync_chawrt.sh
+        ./sync_chawrt.sh
