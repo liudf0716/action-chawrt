@@ -37,12 +37,14 @@ jobs:
 
     - name: Update and install feeds
       run: |
+        git branch
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
     - name: Setup .config based on input
       run: |
         cp ${{ github.event.inputs.target }}.config .config
+        diff ${{ github.event.inputs.target }}.config .config
         make oldconfig
 
     - name: Compile firmware
