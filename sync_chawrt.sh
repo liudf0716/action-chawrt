@@ -56,7 +56,7 @@ sync_repo() {
     echo "Pushing rebased changes to your fork's repository..."
     REPO_PATH="${FORK_REPO#https://github.com/}"
     echo "REPO_PATH: $REPO_PATH"
-    git push --force-with-lease "https://${GH_TOKEN}@github.com/${REPO_PATH}" "$BRANCH" || { 
+    git push -f "https://${GH_TOKEN}@github.com/${REPO_PATH}" "$BRANCH" || { 
         echo "Failed to push changes to $FORK_REPO."; 
         exit 1; 
     }
