@@ -31,7 +31,6 @@ else
     git checkout "$BRANCH" || { echo "Failed to switch to branch $BRANCH."; exit 1; }
     git pull origin "$BRANCH" || { echo "Failed to pull updates from branch $BRANCH."; exit 1; }
 	git submodule update --init --recursive
-    cd ..
 fi
 
 
