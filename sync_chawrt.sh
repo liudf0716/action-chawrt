@@ -9,8 +9,8 @@ REPOS=(
 
 CHAWRT_BRANCH=(
     "openwrt chawrt/main main"
-    "packages chawrt/master master"
     "luci chawrt/master master"
+    "packages chawrt/master master"
 )
 
 # Handle interruptions gracefully
