@@ -46,6 +46,33 @@ jobs:
         submodules: true
         repository: liudf0716/openwrt
         ref: chawrt/main
+    
+    - name: Cache dl directory
+      id: cache-dl
+      uses: actions/cache@v3
+      with:
+        path: dl
+        key: ${{ runner.os }}-openwrt-dl-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-openwrt-dl-
+
+    - name: Cache build directory
+      id: cache-build-dir
+      uses: actions/cache@v3
+      with:
+        path: build_dir
+        key: ${{ runner.os }}-openwrt-build_dir-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-openwrt-build_dir-
+
+    - name: Cache staging directory
+      id: cache-staging-dir
+      uses: actions/cache@v3
+      with:
+        path: staging_dir
+        key: ${{ runner.os }}-openwrt-staging_dir-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-openwrt-staging_dir-
 
     - name: Update and install feeds
       run: |
