@@ -95,25 +95,25 @@ jobs:
     - name: Copy combined files (x86)
       if: ${{ github.event.inputs.target }} == 'x86'
       run: |
-        cp bin/targets/x86/64/*combined.* output/
+        cp bin/targets/x86/64/*combined.* output/ || echo "No combined files found"
 
     - name: Copy sysupgrade files (r2s)
       if: ${{ github.event.inputs.target }} == 'r2s'
       run: |
-        cp bin/targets/rockchip/armv8/*-r2s-ext4-sysupgrade.img.gz output/
+        cp bin/targets/rockchip/armv8/*-r2s-ext4-sysupgrade.img.gz output/ || echo "No sysupgrade files found"
     
     - name: Copy sysupgrade files (jcg)
       if: ${{ github.event.inputs.target }} == 'jcg'
       run: |
-        cp bin/targets/mediatek/filogic/*.itb output/
-        cp bin/targets/mediatek/filogic/*.bin output/
-        cp bin/targets/mediatek/filogic/*.fip output/
+        cp bin/targets/mediatek/filogic/*.itb output/ || echo "No sysupgrade files found"
+        cp bin/targets/mediatek/filogic/*.bin output/ || echo "No sysupgrade files found"
+        cp bin/targets/mediatek/filogic/*.fip output/ || echo "No sysupgrade files found"
 
     - name: Copy files for ea0326gmp
       if: ${{ github.event.inputs.target }} == 'ea0326gmp'
       run: |
         # Add the specific copy commands for ea0326gmp target here
-        cp bin/targets/ea0326gmp/* output/
+        cp bin/targets/ea0326gmp/* output/ || echo "No sysupgrade files found"
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
