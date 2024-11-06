@@ -52,8 +52,9 @@ jobs:
       uses: actions/cache@v3
       with:
         path: dl
-        key: ${{ runner.os }}-openwrt-dl-${{ github.sha }}
+        key: ${{ runner.os }}-openwrt-dl-${{ github.ref_name }}-${{ github.event.inputs.target }}
         restore-keys: |
+          ${{ runner.os }}-openwrt-dl-${{ github.ref_name }}-
           ${{ runner.os }}-openwrt-dl-
 
     - name: Cache build directory
@@ -61,8 +62,9 @@ jobs:
       uses: actions/cache@v3
       with:
         path: build_dir
-        key: ${{ runner.os }}-openwrt-build_dir-${{ github.sha }}
+        key: ${{ runner.os }}-openwrt-build_dir-${{ github.ref_name }}-${{ github.event.inputs.target }}
         restore-keys: |
+          ${{ runner.os }}-openwrt-build_dir-${{ github.ref_name }}-
           ${{ runner.os }}-openwrt-build_dir-
 
     - name: Cache staging directory
@@ -70,8 +72,9 @@ jobs:
       uses: actions/cache@v3
       with:
         path: staging_dir
-        key: ${{ runner.os }}-openwrt-staging_dir-${{ github.sha }}
+        key: ${{ runner.os }}-openwrt-staging_dir-${{ github.ref_name }}-${{ github.event.inputs.target }}
         restore-keys: |
+          ${{ runner.os }}-openwrt-staging_dir-${{ github.ref_name }}-
           ${{ runner.os }}-openwrt-staging_dir-
 
     - name: Update and install feeds
