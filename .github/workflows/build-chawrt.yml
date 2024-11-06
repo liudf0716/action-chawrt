@@ -105,15 +105,15 @@ jobs:
     - name: Copy sysupgrade files (jcg)
       if: ${{ github.event.inputs.target }} == 'jcg'
       run: |
-        cp bin/targets/mediatek/filogic/*.itb output/ || echo "No sysupgrade files found"
-        cp bin/targets/mediatek/filogic/*.bin output/ || echo "No sysupgrade files found"
-        cp bin/targets/mediatek/filogic/*.fip output/ || echo "No sysupgrade files found"
+        cp bin/targets/ramips/mt7621/*-jcg_q20-squashfs-sysupgrade.bin output/ || echo "No sysupgrade files found"
+        cp bin/targets/ramips/mt7621/*-jcg_q20-squashfs-factory.bin output/ || echo "No factory files found"
 
     - name: Copy files for ea0326gmp
       if: ${{ github.event.inputs.target }} == 'ea0326gmp'
       run: |
-        # Add the specific copy commands for ea0326gmp target here
-        cp bin/targets/ea0326gmp/* output/ || echo "No sysupgrade files found"
+        cp bin/targets/mediatek/filogic/*.itb output/ || echo "No sysupgrade files found"
+        cp bin/targets/mediatek/filogic/*.bin output/ || echo "No sysupgrade files found"
+        cp bin/targets/mediatek/filogic/*.fip output/ || echo "No sysupgrade files found"
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
