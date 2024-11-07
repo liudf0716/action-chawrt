@@ -55,16 +55,6 @@ jobs:
           ${{ runner.os }}-openwrt-dl-${{ github.ref_name }}-
           ${{ runner.os }}-openwrt-dl-
 
-    - name: Cache build directory
-      id: cache-build-dir
-      uses: actions/cache@v3
-      with:
-        path: build_dir
-        key: ${{ runner.os }}-openwrt-build_dir-${{ github.ref_name }}-${{ github.event.inputs.target }}
-        restore-keys: |
-          ${{ runner.os }}-openwrt-build_dir-${{ github.ref_name }}-
-          ${{ runner.os }}-openwrt-build_dir-
-
     - name: Cache staging directory
       id: cache-staging-dir
       uses: actions/cache@v3
