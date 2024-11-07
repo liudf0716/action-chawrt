@@ -50,10 +50,9 @@ jobs:
       uses: actions/cache@v3
       with:
         path: dl
-        key: ${{ runner.os }}-openwrt-dl-${{ github.ref_name }}-${{ github.event.inputs.target }}
+        key: ${{ runner.os }}-openwrt-dl
         restore-keys: |
-          ${{ runner.os }}-openwrt-dl-${{ github.ref_name }}-
-          ${{ runner.os }}-openwrt-dl-
+          ${{ runner.os }}-openwrt-dl
 
     - name: Cache staging directory
       id: cache-staging-dir
