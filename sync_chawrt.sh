@@ -2,7 +2,7 @@
 
 # Define variables for repositories and their corresponding branches
 REPOS=(
-    "https://github.com/openwrt/openwrt.git https://github.com/liudf0716/openwrt.git openwrt main"
+    "https://github.com/openwrt/openwrt.git https://github.com/liudf0716/chawrt.git openwrt main"
     "https://github.com/openwrt/packages.git https://github.com/liudf0716/packages.git packages master"
     "https://github.com/openwrt/luci.git https://github.com/liudf0716/luci.git luci master"
 )
@@ -53,29 +53,9 @@ sync_repo() {
     git fetch origin || { echo "Failed to fetch from origin."; exit 1; }
     git fetch upstream || { echo "Failed to fetch from upstream."; exit 1; }
 
-    # Ensure we are on the correct branch
-    echo "Switching to branch $BRANCH..."
-    git checkout -B "$BRANCH" "origin/$BRANCH" || { echo "Failed to switch to branch $BRANCH."; exit 1; }
-
-    # Rebase the local branch onto the upstream branch
-    echo "Rebasing your fork's $BRANCH branch onto upstream's $BRANCH branch..."
-    git rebase upstream/"$BRANCH" || { 
-        echo "Rebase failed. Resolve conflicts and run 'git rebase --continue'."; 
-        exit 1; 
-    }
-
-    # Push the rebased changes to your fork
-    echo "Pushing rebased changes to your fork's repository..."
-    REPO_PATH="${FORK_REPO#https://github.com/}"
-    echo "REPO_PATH: $REPO_PATH"
-    git push -f "https://${GH_TOKEN}@github.com/${REPO_PATH}" "$BRANCH" || { 
-        echo "Failed to push changes to $FORK_REPO."; 
-        exit 1; 
-    }
-
     # Return to the previous directory
     cd ..
-    echo "Successfully synced $REPO_DIR."
+    echo "Successfully fetch $REPO_DIR."
 }
 
 # Function to sync a chawrt branch
