@@ -14,9 +14,9 @@ CHAWRT_BRANCH=(
 )
 
 CHAWRT_24_10_BRANCH=(
-    "openwrt-24.10 chawrt/24.10 openwrt-24.10"
-    "luci-24.10 chawrt/24.10 openwrt-24.10"
-    "packages-24.10 chawrt/24.10 openwrt-24.10"
+    "openwrt chawrt/24.10 openwrt-24.10"
+    "luci chawrt/24.10 openwrt-24.10"
+    "packages chawrt/24.10 openwrt-24.10"
 )
 
 # Handle interruptions gracefully
@@ -97,7 +97,7 @@ sync_chawrt_branch() {
 
     # Rebase to MAIN_BRANCH
     echo "Rebasing your fork's $CHAWRT_BRANCH branch onto upstream's $MAIN_BRANCH branch..."
-    git rebase "$MAIN_BRANCH" || { 
+    git rebase "upstream/$MAIN_BRANCH" || { 
         echo "Rebase failed. Resolve conflicts and run 'git rebase --continue'."; 
         git status
         exit 1; 
