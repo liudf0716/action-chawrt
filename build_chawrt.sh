@@ -1,21 +1,29 @@
 #!/bin/bash
 
 # Set variables
-REPO_URL="https://github.com/liudf0716/openwrt.git"
-REPO_DIR="openwrt"
+REPO_URL="https://github.com/liudf0716/chawrt.git"
+REPO_DIR="chawrt"
 DL_DIR="$(pwd)/dl"
-BRANCH="chawrt/main"
+read -p "Select branch (main, 24.10) [main]: " BRANCH_CHOICE
+BRANCH_CHOICE=${BRANCH_CHOICE:-main}
+BRANCH="chawrt/$BRANCH_CHOICE"
 
 # Handle interruptions gracefully
 trap 'echo "Script interrupted."; exit 1' SIGINT
 
-# Prompt the user for the configuration file input
-read -p "Enter the configuration file prefix (e.g., x86): " CONFIG_PREFIX
-if [ -z "$CONFIG_PREFIX" ]; then
-    echo "Error: Configuration prefix cannot be empty."
-    exit 1
-fi
-CONFIG_FILE="${CONFIG_PREFIX}.config"
+# Prompt the user to select the configuration prefix
+read -p "Select configuration prefix (x86, r2s, ea0326gmp, jcg, micr6608) [x86]: " CONFIG_PREFIX
+CONFIG_PREFIX=${CONFIG_PREFIX:-x86}
+
+case "$CONFIG_PREFIX" in
+    x86|r2s|ea0326gmp|jcg|micr6608)
+        CONFIG_FILE="${CONFIG_PREFIX}.config"
+        ;;
+    *)
+        echo "Error: Invalid configuration prefix."
+        exit 1
+        ;;
+esac
 
 # Clone the OpenWrt repository or pull latest changes if it already exists
 if [ ! -d "$REPO_DIR" ]; then
