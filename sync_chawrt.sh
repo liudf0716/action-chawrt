@@ -49,7 +49,7 @@ sync_repo() {
 
     # Ensure we are on the correct branch
     echo "Switching to branch $BRANCH..."
-    git checkout "$BRANCH" || { echo "Failed to switch to branch $BRANCH."; exit 1; }
+    git checkout -B "$BRANCH" "origin/$BRANCH" || { echo "Failed to switch to branch $BRANCH."; exit 1; }
 
     # Rebase the local branch onto the upstream branch
     echo "Rebasing your fork's $BRANCH branch onto upstream's $BRANCH branch..."
