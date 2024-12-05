@@ -13,6 +13,12 @@ CHAWRT_BRANCH=(
     "packages chawrt/master master"
 )
 
+CHAWRT_24_10_BRANCH=(
+    "openwrt-24.10 chawrt/24.10 openwrt-24.10"
+    "luci-24.10 chawrt/24.10 openwrt-24.10"
+    "packages-24.10 chawrt/24.10 openwrt-24.10"
+)
+
 # Handle interruptions gracefully
 trap 'echo "Script interrupted."; exit 1' SIGINT
 
@@ -93,6 +99,7 @@ sync_chawrt_branch() {
     echo "Rebasing your fork's $CHAWRT_BRANCH branch onto upstream's $MAIN_BRANCH branch..."
     git rebase "$MAIN_BRANCH" || { 
         echo "Rebase failed. Resolve conflicts and run 'git rebase --continue'."; 
+        git status
         exit 1; 
     }
 
@@ -124,4 +131,10 @@ echo "All repositories have been successfully synced."
 echo "Rebasing chawrt branches..."
 for CHARWRT_BRANCH_INFO in "${CHAWRT_BRANCH[@]}"; do
     sync_chawrt_branch $CHARWRT_BRANCH_INFO
+done
+
+# Sync chawrt 24.10 branches
+echo "Rebasing chawrt 24.10 branches..."
+for CHAWRT_24_10_BRANCH_INFO in "${CHAWRT_24_10_BRANCH[@]}"; do
+    sync_chawrt_branch $CHAWRT_24_10_BRANCH_INFO
 done
