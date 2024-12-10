@@ -8,13 +8,13 @@ REPOS=(
 )
 
 CHAWRT_BRANCH=(
-    "chawrt chawrt/main main"
+    "chawrt main main"
     "luci chawrt/master master"
     "packages chawrt/master master"
 )
 
 CHAWRT_24_10_BRANCH=(
-    "chawrt chawrt/24.10 openwrt-24.10"
+    "chawrt 24.10 openwrt-24.10"
     "luci chawrt/24.10 openwrt-24.10"
     "packages chawrt/24.10 openwrt-24.10"
 )
