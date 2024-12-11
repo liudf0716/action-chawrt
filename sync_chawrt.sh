@@ -73,7 +73,7 @@ sync_chawrt_branch() {
 
     # Checkout to CHAWRT_BRANCH
     echo "Switching to branch $CHAWRT_BRANCH..."
-    git checkout "$CHAWRT_BRANCH" || { echo "Failed to checkout to $CHAWRT_BRANCH."; exit 1; }
+    git checkout -b "$CHAWRT_BRANCH" "origin/$CHAWRT_BRANCH" || { echo "Failed to checkout to $CHAWRT_BRANCH."; exit 1; }
 
     # Rebase to MAIN_BRANCH
     echo "Rebasing your fork's $CHAWRT_BRANCH branch onto upstream's $MAIN_BRANCH branch..."
