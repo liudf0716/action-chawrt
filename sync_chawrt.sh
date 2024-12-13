@@ -64,6 +64,8 @@ sync_chawrt_branch() {
     local CHAWRT_BRANCH="$2"
     local MAIN_BRANCH="$3"
 
+    echo "Syncing chawrt branch: $CHAWRT_BRANCH in repository: $REPO_DIR to $MAIN_BRANCH"
+
     if [ ! -d "$REPO_DIR" ]; then
         echo "Repository $REPO_DIR does not exist locally. Skipping..."
         return
@@ -71,9 +73,14 @@ sync_chawrt_branch() {
 
     cd "$REPO_DIR" || { echo "Failed to change directory to $REPO_DIR."; exit 1; }
 
-    # Checkout to CHAWRT_BRANCH
-    echo "Switching to branch $CHAWRT_BRANCH..."
-    git checkout -b "$CHAWRT_BRANCH" "origin/$CHAWRT_BRANCH" || { echo "Failed to checkout to $CHAWRT_BRANCH."; exit 1; }
+    # Checkout to CHAWRT_BRANCH if it exists, otherwise create a new branch
+    if git show-ref --verify --quiet "refs/heads/$CHAWRT_BRANCH"; then
+        echo "Switching to existing branch $CHAWRT_BRANCH..."
+        git checkout "$CHAWRT_BRANCH" || { echo "Failed to checkout to $CHAWRT_BRANCH."; exit 1; }
+    else
+        echo "Creating and switching to new branch $CHAWRT_BRANCH..."
+        git checkout -b "$CHAWRT_BRANCH" "origin/$CHAWRT_BRANCH" || { echo "Failed to create and checkout to $CHAWRT_BRANCH."; exit 1; }
+    fi
 
     # Rebase to MAIN_BRANCH
     echo "Rebasing your fork's $CHAWRT_BRANCH branch onto upstream's $MAIN_BRANCH branch..."
