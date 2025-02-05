@@ -22,6 +22,9 @@ CHAWRT_24_10_BRANCH=(
 # Handle interruptions gracefully
 trap 'echo "Script interrupted."; exit 1' SIGINT
 
+# Initialize an array to hold failed tasks
+FAILED_TASKS=()
+
 # Function to sync a repository
 sync_repo() {
     local UPSTREAM_REPO="$1"
@@ -34,10 +37,10 @@ sync_repo() {
     # Clone the forked repository if it doesn't exist locally
     if [ ! -d "$REPO_DIR" ]; then
         echo "Cloning your forked repository from $FORK_REPO..."
-        git clone "$FORK_REPO" "$REPO_DIR" || { echo "Failed to clone $REPO_DIR."; exit 1; }
+        git clone "$FORK_REPO" "$REPO_DIR" || { echo "Failed to clone $REPO_DIR."; FAILED_TASKS+=("$REPO_DIR (clone)"); return; }
     fi
 
-    cd "$REPO_DIR" || { echo "Failed to change directory to $REPO_DIR."; exit 1; }
+    cd "$REPO_DIR" || { echo "Failed to change directory to $REPO_DIR."; FAILED_TASKS+=("$REPO_DIR (cd)"); return; }
 
     # Check if the upstream remote already exists
     if git remote | grep -q upstream; then
@@ -45,17 +48,17 @@ sync_repo() {
     else
         # Add upstream repository as a remote
         echo "Adding upstream repository as a remote..."
-        git remote add upstream "$UPSTREAM_REPO" || { echo "Failed to add upstream remote."; exit 1; }
+        git remote add upstream "$UPSTREAM_REPO" || { echo "Failed to add upstream remote."; FAILED_TASKS+=("$REPO_DIR (add remote)"); return; }
     fi
 
     # Fetch changes from both origin and upstream
     echo "Fetching latest changes from origin and upstream..."
-    git fetch origin || { echo "Failed to fetch from origin."; exit 1; }
-    git fetch upstream || { echo "Failed to fetch from upstream."; exit 1; }
+    git fetch origin || { echo "Failed to fetch from origin."; FAILED_TASKS+=("$REPO_DIR (fetch origin)"); return; }
+    git fetch upstream || { echo "Failed to fetch from upstream."; FAILED_TASKS+=("$REPO_DIR (fetch upstream)"); return; }
 
     # Return to the previous directory
     cd ..
-    echo "Successfully fetch $REPO_DIR."
+    echo "Successfully fetched $REPO_DIR."
 }
 
 # Function to sync a chawrt branch
@@ -68,18 +71,19 @@ sync_chawrt_branch() {
 
     if [ ! -d "$REPO_DIR" ]; then
         echo "Repository $REPO_DIR does not exist locally. Skipping..."
+        FAILED_TASKS+=("$REPO_DIR (not exist)")
         return
     fi
 
-    cd "$REPO_DIR" || { echo "Failed to change directory to $REPO_DIR."; exit 1; }
+    cd "$REPO_DIR" || { echo "Failed to change directory to $REPO_DIR."; FAILED_TASKS+=("$REPO_DIR (cd)"); return; }
 
     # Checkout to CHAWRT_BRANCH if it exists, otherwise create a new branch
     if git show-ref --verify --quiet "refs/heads/$CHAWRT_BRANCH"; then
         echo "Switching to existing branch $CHAWRT_BRANCH..."
-        git checkout "$CHAWRT_BRANCH" || { echo "Failed to checkout to $CHAWRT_BRANCH."; exit 1; }
+        git checkout "$CHAWRT_BRANCH" || { echo "Failed to checkout to $CHAWRT_BRANCH."; FAILED_TASKS+=("$REPO_DIR (checkout)"); return; }
     else
         echo "Creating and switching to new branch $CHAWRT_BRANCH..."
-        git checkout -b "$CHAWRT_BRANCH" "origin/$CHAWRT_BRANCH" || { echo "Failed to create and checkout to $CHAWRT_BRANCH."; exit 1; }
+        git checkout -b "$CHAWRT_BRANCH" "origin/$CHAWRT_BRANCH" || { echo "Failed to create and checkout to $CHAWRT_BRANCH."; FAILED_TASKS+=("$REPO_DIR (create branch)"); return; }
     fi
 
     # Rebase to MAIN_BRANCH
@@ -87,7 +91,8 @@ sync_chawrt_branch() {
     git rebase "upstream/$MAIN_BRANCH" || { 
         echo "Rebase failed. Resolve conflicts and run 'git rebase --continue'."; 
         git status
-        exit 1; 
+        FAILED_TASKS+=("$REPO_DIR (rebase)")
+        return
     }
 
     # Push to remote
@@ -96,7 +101,8 @@ sync_chawrt_branch() {
     echo "REPO_PATH: $REPO_PATH"
     git push -f "https://${GH_TOKEN}@github.com/${REPO_PATH}" "$CHAWRT_BRANCH" || { 
         echo "Failed to push changes to $REPO_DIR."; 
-        exit 1; 
+        FAILED_TASKS+=("$REPO_DIR (push)")
+        return
     }
 
     cd ..
@@ -112,7 +118,7 @@ fi
 for REPO_INFO in "${REPOS[@]}"; do
     sync_repo $REPO_INFO
 done
-echo "All repositories have been successfully synced."
+echo "All repositories have been processed."
 
 # Sync chawrt branches
 echo "Rebasing chawrt branches..."
@@ -125,3 +131,14 @@ echo "Rebasing chawrt 24.10 branches..."
 for CHAWRT_24_10_BRANCH_INFO in "${CHAWRT_24_10_BRANCH[@]}"; do
     sync_chawrt_branch $CHAWRT_24_10_BRANCH_INFO
 done
+
+# Output failed tasks
+if [ ${#FAILED_TASKS[@]} -ne 0 ]; then
+    echo "The following tasks failed:"
+    for TASK in "${FAILED_TASKS[@]}"; do
+        echo "- $TASK"
+    done
+    exit 1
+else
+    echo "All tasks completed successfully."
+fi
