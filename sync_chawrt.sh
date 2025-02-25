@@ -3,19 +3,16 @@
 # Define variables for repositories and their corresponding branches
 REPOS=(
     "https://github.com/openwrt/openwrt.git https://github.com/liudf0716/chawrt.git chawrt main"
-    "https://github.com/openwrt/packages.git https://github.com/liudf0716/packages.git packages master"
-    "https://github.com/openwrt/luci.git https://github.com/liudf0716/luci.git luci master"
+    "https://github.com/openwrt/packages.git https://github.com/liudf0716/packages.git packages master" 
 )
 
 CHAWRT_BRANCH=(
     "chawrt main main"
-    "luci chawrt/master master"
     "packages chawrt/master master"
 )
 
 CHAWRT_24_10_BRANCH=(
     "chawrt 24.10 openwrt-24.10"
-    "luci chawrt/24.10 openwrt-24.10"
     "packages chawrt/24.10 openwrt-24.10"
 )
 
