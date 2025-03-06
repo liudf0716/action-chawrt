@@ -8,13 +8,15 @@ REPOS=(
 )
 
 CHAWRT_BRANCH=(
-    "chawrt|chawrt-main|main"          # REPO_DIR|YOUR_BRANCH|UPSTREAM_BRANCH
+    "chawrt|main|main"          # REPO_DIR|YOUR_BRANCH|UPSTREAM_BRANCH
     "packages|chawrt/master|master"
+    "luci|chawrt/master|master"
 )
 
 CHAWRT_24_10_BRANCH=(
     "chawrt|24.10|openwrt-24.10"
     "packages|chawrt/24.10|openwrt-24.10"
+    "luci|chawrt/24.10|openwrt-24.10"
 )
 
 # 优雅处理中断
