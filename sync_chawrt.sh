@@ -139,9 +139,10 @@ for BRANCH_INFO in "${CHAWRT_BRANCH[@]}"; do
 done
 
 # 可选：同步 24.10 分支
-for BRANCH_INFO in "${CHAWRT_24_10_BRANCH[@]}"; do
-     sync_chawrt_branch "$BRANCH_INFO"
-done
+#echo "同步 chawrt 24.10 分支..."
+#for BRANCH_INFO in "${CHAWRT_24_10_BRANCH[@]}"; do
+#     sync_chawrt_branch "$BRANCH_INFO"
+#done
 
 # 输出失败任务
 if [ ${#FAILED_TASKS[@]} -ne 0 ]; then
