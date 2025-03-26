@@ -2,6 +2,8 @@ name: Daily Sync
 
 on:
   workflow_dispatch:  # Allows manual triggering of the workflow
+  schedule:
+    - cron: '0 0 * * *'  # Runs at 00:00 UTC every day
 
 jobs:
   sync:
