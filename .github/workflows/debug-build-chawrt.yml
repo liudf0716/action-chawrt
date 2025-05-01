@@ -20,16 +20,12 @@ jobs:
         sudo apt install python2 qemu-utils
         
     - name: Checkout source code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         submodules: true
-        repository: liudf0716/openwrt
+        repository: liudf0716/chawrt
         ref: chawrt
-
-    - name: Update feeds.conf.default
-      run: |
-        echo "src-git package https://github.com/liudf0716/packages;chawrt" > feeds.conf.default
-        echo "src-git luci https://github.com/liudf0716/luci;chawrt" >> feeds.conf.default
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup .config based on input
       run: |
@@ -43,7 +39,7 @@ jobs:
     - name: Download files
       run: |
         make defconfig
-        make -j8 download
+        make -j4 download
 
     - name: Compile firmware
       run: |
