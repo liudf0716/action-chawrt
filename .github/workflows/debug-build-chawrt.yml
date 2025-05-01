@@ -35,6 +35,12 @@ jobs:
       run: |
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+        
+    - name: Install host tools
+      run: |
+        mkdir -p staging_dir
+        make tools/install
+        make toolchain/install
     
     - name: Download files
       run: |
