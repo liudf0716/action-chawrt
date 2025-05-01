@@ -24,7 +24,7 @@ jobs:
       with:
         submodules: true
         repository: liudf0716/chawrt
-        ref: chawrt
+        ref: main
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup .config based on input
