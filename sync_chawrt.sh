@@ -158,7 +158,18 @@ sync_chawrt_branch() {
 
     # 切换到目标分支（若不存在则基于上游创建）
     if git show-ref --verify --quiet "refs/heads/$YOUR_BRANCH"; then
+        echo "切换到现有分支: $YOUR_BRANCH"
         git checkout "$YOUR_BRANCH"
+        
+        # 如果远程分支存在，先拉取远程更改
+        if git show-ref --verify --quiet "refs/remotes/origin/$YOUR_BRANCH"; then
+            echo "拉取远程分支更新: origin/$YOUR_BRANCH"
+            git pull origin "$YOUR_BRANCH" --no-edit || {
+                echo "警告: 拉取远程更新失败，尝试重置为远程状态"
+                git fetch origin "$YOUR_BRANCH"
+                git reset --hard "origin/$YOUR_BRANCH"
+            }
+        fi
     else
         echo "创建新分支: $YOUR_BRANCH 基于 upstream/$UPSTREAM_BRANCH"
         if ! git checkout -b "$YOUR_BRANCH" "upstream/$UPSTREAM_BRANCH"; then
@@ -190,14 +201,19 @@ sync_chawrt_branch() {
     # 推送到远程仓库
     echo "推送分支: $YOUR_BRANCH 到 origin"
     if ! git push "https://${GH_TOKEN}@github.com/liudf0716/${REPO_DIR}.git" "$YOUR_BRANCH"; then
-        echo "推送失败: $REPO_DIR"
-        if [ "$TASK_TYPE" = "luci" ]; then
-            LUCI_FAILED_TASKS+=("$REPO_DIR (push)")
+        echo "推送失败，尝试强制推送..."
+        if ! git push "https://${GH_TOKEN}@github.com/liudf0716/${REPO_DIR}.git" "$YOUR_BRANCH" --force-with-lease; then
+            echo "强制推送也失败: $REPO_DIR"
+            if [ "$TASK_TYPE" = "luci" ]; then
+                LUCI_FAILED_TASKS+=("$REPO_DIR (push)")
+            else
+                CORE_FAILED_TASKS+=("$REPO_DIR (push)")
+            fi
+            cd ..
+            return 1
         else
-            CORE_FAILED_TASKS+=("$REPO_DIR (push)")
+            echo "强制推送成功: $YOUR_BRANCH"
         fi
-        cd ..
-        return 1
     fi
 
     cd ..
